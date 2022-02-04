@@ -6,6 +6,7 @@ use crate::core::config::redis_config::RedisConfig;
 
 mod core;
 mod env;
+mod product;
 
 fn main() {
     let args = Args::parse();

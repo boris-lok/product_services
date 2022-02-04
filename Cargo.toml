@@ -60,3 +60,6 @@ version = "0.15.0"
 [dependencies.clap]
 version = "3.0.12"
 features = ["derive"]
+
+[dependencies.rust_decimal]
+version = "1.21"
