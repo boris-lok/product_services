@@ -42,9 +42,6 @@ version = "0.1.29"
 [dependencies.tracing-subscriber]
 version = "0.3.6"
 
-[dependencies.anyhow]
-version = "1.0.53"
-
 [dependencies.thiserror]
 version = "1.0.30"
 

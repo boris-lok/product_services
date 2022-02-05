@@ -1,3 +1,3 @@
-pub mod table;
-pub mod request;
 pub mod product;
+pub mod request;
+pub mod table;

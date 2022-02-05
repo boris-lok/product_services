@@ -3,8 +3,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use sqlx::FromRow;
 
-
-#[derive(Debug,Serialize,Deserialize,FromRow, Clone)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct Product {
     pub id: i64,
     pub name: String,
