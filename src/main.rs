@@ -1,4 +1,5 @@
 use clap::Parser;
+use snowflake::SnowflakeGenerator;
 
 use crate::core::args::Args;
 use crate::core::config::postgres_config::PostgresConfig;

@@ -60,3 +60,7 @@ features = ["derive"]
 
 [dependencies.rust_decimal]
 version = "1.21"
+
+[dependencies.snowflake]
+git = "https://github.com/boris-lok/snowflake"
+branch = "master"

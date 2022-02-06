@@ -1345,6 +1345,7 @@ dependencies = [
  "rust_decimal",
  "sea-query",
  "serde",
+ "snowflake",
  "sqlx",
  "thiserror",
  "tokio",
@@ -1744,6 +1745,11 @@ name = "smallvec"
 version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
+
+[[package]]
+name = "snowflake"
+version = "0.1.0"
+source = "git+https://github.com/boris-lok/snowflake?branch=master#1a6e4b37f4ddec3d26cb5848cfe917bc7c12200b"
 
 [[package]]
 name = "socket2"
