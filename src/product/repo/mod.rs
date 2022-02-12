@@ -1,2 +1,2 @@
 pub mod postgres_repository;
-mod repository;
+pub mod repository;

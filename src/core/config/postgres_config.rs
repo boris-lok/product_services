@@ -2,15 +2,16 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::Postgres;
 
 use crate::core::alias_type::AppResult;
+use crate::core::error::AppError;
 
 #[derive(Debug)]
 pub struct PostgresConfig {
-    host: String,
-    port: u16,
-    database: String,
-    username: String,
-    password: String,
-    max_connection: u32,
+    pub host: String,
+    pub port: u16,
+    pub database: String,
+    pub username: String,
+    pub password: String,
+    pub max_connection: u32,
 }
 
 impl PostgresConfig {
@@ -45,20 +46,5 @@ impl PostgresConfig {
             database,
             max_connection,
         }
-    }
-
-    /// create database connection pool.
-    pub async fn create_connection(&self) -> AppResult<sqlx::Pool<Postgres>> {
-        let connection_options = PgConnectOptions::new()
-            .host(self.host.as_str())
-            .database(self.database.as_str())
-            .username(self.username.as_str())
-            .password(self.password.as_str())
-            .port(self.port);
-
-        Ok(PgPoolOptions::new()
-            .max_connections(self.max_connection)
-            .connect_with(connection_options)
-            .await?)
     }
 }

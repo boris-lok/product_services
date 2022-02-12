@@ -1,12 +1,12 @@
-use crate::core::alias_type::AppResult;
+use crate::core::{alias_type::AppResult, error::AppError};
 use r2d2_redis::{r2d2, RedisConnectionManager};
 
 #[derive(Debug)]
 pub struct RedisConfig {
-    host: String,
-    username: String,
-    password: String,
-    port: u16,
+    pub host: String,
+    pub username: String,
+    pub password: String,
+    pub port: u16,
 }
 
 impl RedisConfig {
@@ -26,15 +26,5 @@ impl RedisConfig {
             password,
             port,
         }
-    }
-
-    pub async fn create_connection(&self) -> AppResult<r2d2::Pool<RedisConnectionManager>> {
-        let redis_uri = format!(
-            "redis://{}:{}@{}:{}",
-            self.username, self.password, self.host, self.port
-        );
-
-        let manager = RedisConnectionManager::new(redis_uri)?;
-        Ok(r2d2::Pool::builder().build(manager)?)
     }
 }
