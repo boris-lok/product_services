@@ -2,7 +2,7 @@ pub mod postgres_repo;
 
 use super::json::product::Product;
 use crate::pb::{
-    CreateProductRequest, GetProductRequest, ListProductRequest, UpdateProductRequest,
+    CreateProductRequest, ListProductRequest, UpdateProductRequest,
 };
 use async_trait::async_trait;
 use common::utils::alias::{AppResult, PostgresAcquire};
