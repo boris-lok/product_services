@@ -1,6 +1,6 @@
+use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
-use serde::Deserialize;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
@@ -9,7 +9,7 @@ pub struct Product {
     pub name: String,
     pub currency: i16,
     pub price: Decimal,
-    pub created_at: Option<chrono::DateTime<chrono::Utc>>,
-    pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
-    pub deleted_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub deleted_at: Option<DateTime<Utc>>,
 }

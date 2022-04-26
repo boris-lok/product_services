@@ -1,4 +1,6 @@
 /target
 .idea
-env/.dev.env
-env/.prod.env
+env/dev.env
+env/prod.env
+proto/product.proto
+common
