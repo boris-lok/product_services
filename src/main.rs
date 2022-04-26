@@ -5,4 +5,5 @@ mod pb {
 }
 
 #[tokio::main]
-async fn main() {}
+async fn main() {
+}
