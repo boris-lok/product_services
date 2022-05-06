@@ -42,7 +42,7 @@ async fn main() -> AppResult<()> {
 
     let service = ProductServicesImpl::new(database_connection);
 
-    let addr = "127.0.0.1:50002".parse().unwrap();
+    let addr = "[::1]:50002".parse().unwrap();
 
     tracing::info!(message = "Starting server.", %addr);
 

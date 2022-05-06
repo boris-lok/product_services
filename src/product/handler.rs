@@ -9,6 +9,7 @@ use crate::pb::{
 };
 use crate::product::services::{ProductService, ProductServiceImpl};
 
+#[derive(Debug)]
 pub struct ProductServicesImpl {
     session: Pool<Postgres>,
 }
@@ -41,7 +42,7 @@ impl ProductServices for ProductServicesImpl {
             })
             .map_err(|err| {
                 let msg = err.to_string();
-                tracing::error!(msg);
+                tracing::error!(%msg);
                 Status::failed_precondition(msg)
             })
     }
@@ -63,7 +64,7 @@ impl ProductServices for ProductServicesImpl {
             })
             .map_err(|err| {
                 let msg = err.to_string();
-                tracing::error!(msg);
+                tracing::error!(%msg);
                 Status::failed_precondition(msg)
             })
     }
@@ -85,7 +86,7 @@ impl ProductServices for ProductServicesImpl {
             })
             .map_err(|err| {
                 let msg = err.to_string();
-                tracing::error!(msg);
+                tracing::error!(%msg);
                 Status::failed_precondition(msg)
             })
     }
@@ -107,7 +108,7 @@ impl ProductServices for ProductServicesImpl {
             })
             .map_err(|err| {
                 let msg = err.to_string();
-                tracing::error!(msg);
+                tracing::error!(%msg);
                 Status::failed_precondition(msg)
             })
     }
