@@ -1,8 +1,9 @@
 use async_trait::async_trait;
-use common::utils::alias::AppResult;
-use common::utils::error::AppError;
 use rust_decimal::Decimal;
 use sqlx::{Pool, Postgres};
+
+use common::utils::alias::AppResult;
+use common::utils::error::AppError;
 
 use crate::pb::{CreateProductRequest, ListProductRequest, UpdateProductRequest};
 use crate::product::json::product::Product;

@@ -1,11 +1,14 @@
+use async_trait::async_trait;
+use sea_query::{Expr, PostgresQueryBuilder, Query};
+
+use common::utils::alias::{AppResult, PostgresAcquire};
+use common::utils::error::AppError;
+
+use crate::ID_GENERATOR;
+use crate::pb::{CreateProductRequest, ListProductRequest, UpdateProductRequest};
 use crate::product::json::{product::Product, table::Products};
 
 use super::ProductRepo;
-use crate::pb::{CreateProductRequest, ListProductRequest, UpdateProductRequest};
-use async_trait::async_trait;
-use common::utils::alias::{AppResult, PostgresAcquire};
-use common::utils::error::AppError;
-use sea_query::{Expr, PostgresQueryBuilder, Query};
 
 pub struct ProductRepoImpl;
 
@@ -32,16 +35,10 @@ impl ProductRepo for ProductRepoImpl {
             .and_where(Expr::col(Products::Id).eq(id))
             .to_string(PostgresQueryBuilder);
 
-        dbg!(&sql);
-
-        let product = sqlx::query_as::<_, Product>(sql.as_str())
+        sqlx::query_as::<_, Product>(sql.as_str())
             .fetch_optional(&mut *conn)
             .await
-            .map_err(|e| AppError::DatabaseError(e.to_string()));
-
-        dbg!(&product);
-
-        product
+            .map_err(|e| AppError::DatabaseError(e.to_string()))
     }
 
     async fn create(
@@ -49,6 +46,8 @@ impl ProductRepo for ProductRepoImpl {
         request: CreateProductRequest,
         executor: impl PostgresAcquire<'_> + 'async_trait,
     ) -> AppResult<Product> {
+        let id = async move { ID_GENERATOR.lock().unwrap().next_id() as u64 }.await;
+
         let mut conn = executor.acquire().await.unwrap();
 
         let name = request.name.clone().into();
@@ -67,11 +66,9 @@ impl ProductRepo for ProductRepoImpl {
         let sql = Query::insert()
             .into_table(Products::Table)
             .columns(cols.clone())
-            .values_panic(vec!["1".into(), name, currency, price, now])
+            .values_panic(vec![id.into(), name, currency, price, now])
             .returning(Query::select().columns(cols).take())
             .to_string(PostgresQueryBuilder);
-
-        dbg!(&sql);
 
         sqlx::query_as::<_, Product>(&sql)
             .fetch_one(&mut *conn)
@@ -104,8 +101,6 @@ impl ProductRepo for ProductRepoImpl {
             .values(update_values)
             .and_where(Expr::col(Products::Id).eq(request.id))
             .to_string(PostgresQueryBuilder);
-
-        dbg!(&sql);
 
         sqlx::query(&sql)
             .execute(&mut *conn)

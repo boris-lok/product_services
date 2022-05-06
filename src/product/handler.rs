@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use sqlx::{Pool, Postgres};
 use tonic::{Request, Response, Status};
+use tracing::instrument;
 
 use crate::pb::{
     product_services_server::ProductServices, CreateProductRequest, GetProductRequest,
@@ -8,33 +9,41 @@ use crate::pb::{
 };
 use crate::product::services::{ProductService, ProductServiceImpl};
 
-pub struct ProductServicsImpl {
+pub struct ProductServicesImpl {
     session: Pool<Postgres>,
 }
 
-impl ProductServicsImpl {
+impl ProductServicesImpl {
     pub fn new(session: Pool<Postgres>) -> Self {
         Self { session }
     }
 }
 
 #[async_trait]
-impl ProductServices for ProductServicsImpl {
+impl ProductServices for ProductServicesImpl {
+    #[instrument]
     async fn create(
         &self,
         request: Request<CreateProductRequest>,
     ) -> Result<Response<Product>, Status> {
+        tracing::info!(message = "Got a request to create a product.");
+
         let request = request.into_inner();
 
         let services = ProductServiceImpl::new(self.session.clone());
 
-        let product = services.create(request).await.map(|e| e.into());
-
-        if product.is_err() {
-            return Err(Status::failed_precondition("failed to create a product."));
-        }
-
-        Ok(Response::new(product.unwrap()))
+        services
+            .create(request)
+            .await
+            .map(|p| {
+                let p: Product = p.into();
+                Response::new(p)
+            })
+            .map_err(|err| {
+                let msg = err.to_string();
+                tracing::error!(msg);
+                Status::failed_precondition(msg)
+            })
     }
 
     async fn update(
@@ -45,13 +54,18 @@ impl ProductServices for ProductServicsImpl {
 
         let services = ProductServiceImpl::new(self.session.clone());
 
-        let product = services.update(request).await.map(|e| e.into());
-
-        if product.is_err() {
-            return Err(Status::failed_precondition("failed to update a product."));
-        }
-
-        Ok(Response::new(product.unwrap()))
+        services
+            .update(request)
+            .await
+            .map(|p| {
+                let p: Product = p.into();
+                Response::new(p)
+            })
+            .map_err(|err| {
+                let msg = err.to_string();
+                tracing::error!(msg);
+                Status::failed_precondition(msg)
+            })
     }
 
     async fn get(
@@ -62,18 +76,18 @@ impl ProductServices for ProductServicsImpl {
 
         let services = ProductServiceImpl::new(self.session.clone());
 
-        let product = services
+        services
             .get(request.id as i64)
             .await
-            .map(|e| e.map(|p| p.into()));
-
-        if product.is_err() {
-            return Err(Status::failed_precondition("failed to get a product."));
-        }
-
-        Ok(Response::new(GetProductResponse {
-            product: product.unwrap(),
-        }))
+            .map(|p| {
+                let p: Option<Product> = p.map(|e| e.into());
+                Response::new(GetProductResponse { product: p })
+            })
+            .map_err(|err| {
+                let msg = err.to_string();
+                tracing::error!(msg);
+                Status::failed_precondition(msg)
+            })
     }
 
     async fn list(
@@ -84,16 +98,17 @@ impl ProductServices for ProductServicsImpl {
 
         let services = ProductServiceImpl::new(self.session.clone());
 
-        let products = services.list(request).await.map(|e| {
-            let e = e.into_iter().map(|p| p.into()).collect::<_>();
-
-            ListProductResponse { products: e }
-        });
-
-        if products.is_err() {
-            return Err(Status::failed_precondition("failed to list products."));
-        }
-
-        Ok(Response::new(products.unwrap()))
+        services
+            .list(request)
+            .await
+            .map(|p| {
+                let p: Vec<Product> = p.into_iter().map(|e| e.into()).collect();
+                Response::new(ListProductResponse { products: p })
+            })
+            .map_err(|err| {
+                let msg = err.to_string();
+                tracing::error!(msg);
+                Status::failed_precondition(msg)
+            })
     }
 }
